@@ -1,5 +1,6 @@
 # jtabwb
 Java Tableau Workbench
+----------------------
 
 
 JTabWb is a Java framework for developing provers based on sequent or
@@ -8,7 +9,6 @@ proof of a given goal driven by a user-defined prover. The user is
 required to define the components of a prover by implementing
 suitable Java interfaces.
 
-JTabWb requires Java 1.8 or later. Download the jtabwb-1.0.jar file
-and add it to your CLASSPATH.
+JTabWb requires Java 1.8 or later.
 
-See http://www.dista.uninsubria.it/~ferram/
+See http://www.dista.uninsubria.it/~ferram/sw/jtabwb/jtabwb.html
