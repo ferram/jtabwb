@@ -1,4 +1,3 @@
-# jtabwb
 Java Tableau Workbench
 ----------------------
 
