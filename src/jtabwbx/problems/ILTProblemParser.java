@@ -22,7 +22,6 @@ import java.io.Reader;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
-import jtabwb.launcher.ProblemDescriptionException;
 import jtabwb.util.CaseNotImplementedImplementationError;
 import jtabwbx.problems.ILTPProblemLexer.Token;
 import jtabwbx.problems.ILTPProblemLexer.TokenType;

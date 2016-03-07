@@ -20,8 +20,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import jtabwb.launcher.ProblemDescription;
-import jtabwb.launcher.ProblemDescriptionException;
 import jtabwb.launcher._ProblemReader;
 
 /**

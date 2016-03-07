@@ -19,7 +19,6 @@ package jtabwbx.problems;
 import java.util.HashMap;
 
 import jtabwb.engine.ProvabilityStatus;
-import jtabwb.launcher.ProblemDescriptionException;
 import jtabwb.util.CaseNotImplementedImplementationError;
 import jtabwbx.problems.ILTProblemParser.Terminal;
 import jtabwbx.prop.basic.PropositionalConnective;

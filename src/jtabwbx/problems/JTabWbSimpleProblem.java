@@ -16,12 +16,10 @@
  *******************************************************************************/
 package jtabwbx.problems;
 
-import java.util.LinkedList;
 
-import jtabwb.launcher.ProblemDescription;
 
 /**
- * Pitp problem description only contains one conjecture, the propositional
+ * JTabWb problem description only contains one conjecture, the propositional
  * formula to prove.
  * 
  * @author Mauro Ferrari

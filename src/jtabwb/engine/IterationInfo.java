@@ -44,9 +44,9 @@ public class IterationInfo {
     BRANCH_EXISTS_RULE_APPLICATION,
     /**
      * The move executed in the last completed iteration was an attempt to
-     * restore a branch point.
+     * restore an AND branch point.
      */
-    BRANCH_POINT_SEARCH,
+    AND_BRANCH_POINT_SEARCH,
     /**
      * The move executed in the last completed iteration was an attempt to
      * restore a backtrack point.
@@ -141,7 +141,7 @@ public class IterationInfo {
    * backtrack-point the engine restored such a point, in this case the method
    * returns the instance of the rule restored from the stack. If the stack did
    * not contained a backtrack point, the method returns <code>null</code>.</li>
-   * <li>{@link Move#BRANCH_POINT_SEARCH}: if the stack contained a branch-point
+   * <li>{@link Move#AND_BRANCH_POINT_SEARCH}: if the stack contained a branch-point
    * the engine restored such a point, in this case the method returns the
    * instance of the rule restored from the stack. If the stack did not
    * contained a branch-point, the method returns <code>null</code>.</li>
@@ -175,7 +175,7 @@ public class IterationInfo {
    * method returned <code>null</code>. This means that the search for a proof
    * of the current goal failed and the engine searched the stack for a
    * backtrack-point.</li>
-   * <li>The method returns {@link Move#BRANCH_POINT_SEARCH} if the rule applied
+   * <li>The method returns {@link Move#AND_BRANCH_POINT_SEARCH} if the rule applied
    * in the last iteration was an instance of {@link _ClashDetectionRule} and
    * the method {@link _ClashDetectionRule#status()} returned
    * {@link ProofSearchResult#SUCCESS}. In this case the engine query the stack

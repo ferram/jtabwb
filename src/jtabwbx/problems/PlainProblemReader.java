@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.Reader;
 
 import jtabwb.engine.ProvabilityStatus;
-import jtabwb.launcher.ProblemDescriptionException;
 import jtabwb.launcher._ProblemReader;
 
 /**
@@ -32,9 +31,9 @@ import jtabwb.launcher._ProblemReader;
  */
 public class PlainProblemReader implements _ProblemReader {
 
-  public static final String NAME = "pitpplain";
+  public static final String NAME = "plain";
   private static final String DESCRIPTION =
-      "The file consists of exactly one line containing the conjecture (a PITP formula) description ";
+      "The file consists of exactly one line containing the conjecture";
 
   /**
    * Build a plain reader.

@@ -16,6 +16,7 @@ import jtabwb.engine.Trace;
 import jtabwb.engine._AbstractGoal;
 import jtabwb.engine._Prover;
 import jtabwb.launcher.Launcher.TestStatus;
+import jtabwbx.problems.ProblemDescription;
 
 /**
  * A bunch of data about a proof-search execution.

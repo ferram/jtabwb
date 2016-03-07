@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2013, 2015 Mauro Ferrari
- *  
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 3 of the License, or (at your option) any later
  * version.
- *  
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ * 
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
@@ -23,7 +23,7 @@ class VerboseModeSupport {
     static class ITERATION_INFO {
 
       static final String BACKTRACK_POINT_ADDED = "Stack size: [%s], BACKTRACK POINT added";
-      static final String BRANCH_POINT_ADDED = "Stack size: [%s], BRANCH POINT added";
+      static final String AND_BRANCH_POINT_ADDED = "Stack size: [%s], AND-BRANCH POINT added";
       static final String CLASH_RULE_NAME = "Rule name: %s";
       static final String FORCE_BRANCH_FAILURE_RULE_NAME = "Rule name: %s";
       static final String FORCE_BRANCH_SUCCESS_RULE_NAME = "Rule name: %s";
@@ -40,28 +40,30 @@ class VerboseModeSupport {
       static final String GENERATED_NODESET = "Generated node: %s";
       static final String BRANCH_EXISTS_NEXT_STEP =
           "Rule name [%s], conclusions [%d], treating conclusion [%d of %2$d]";
-      static final String META_BACKTRACK_RULE_APPLICATION = " Rule name [%s], rules to try [%d]";
+      static final String META_BACKTRACK_RULE_APPLICATION = "Rule name [%s], rules to try [%d]";
       static final String ON_RULE_COMPLETED_LISTENER =
           "Added [on rule completed] listener for [%s]";
-      static final String ON_RULE_RESUMED_LISTENER = " Added [on rule resumed] listener for [%s]";
+      static final String ON_RULE_RESUMED_LISTENER = "Added [on rule resumed] listener for [%s]";
       static final String REGULAR_RULE_APPLICATION =
           "Rule name [%s], conclusions [%d], treating branch [%d of %2$d]";
-      static final String RULE_DETAILS = " Details: %s";
-      static final String SELECTED_BACKTRACK_RULE = " Rule [%d of %d] selected, [%s]";
+      static final String RULE_DETAILS = "Details: %s";
+      static final String SELECTED_BACKTRACK_RULE = "Rule [%d of %d] selected, [%s]";
       static final String SELECTED_BACKTRACK_RULE_FOR =
           "Rule [%d of %d] selected, [%s] on [%s]: %s";
-      static final String SELECTED_MAIN_FORMULA = " Selected main formula [%s]: %s";
+      static final String SELECTED_MAIN_FORMULA = "Selected formula [%s]: %s";
     }
 
     static class RESUMED_NODE_INFO {
 
       static final String BACKTRACK_POINT_RESUMED = "Resumed BACKTRACK point. Node set %s";
       static final String BACKTRACK_TYPE = "Backtrack rule type [%s]";
-      static final String BRANCH_POINT_RESUMED = "Resumed BRANCH point generated at iteration [%d]";
+      static final String BRANCH_POINT_RESUMED =
+          "Resumed AND-BRANCH point generated at iteration [%d]";
       static final String BRANCH_POINT_RESUMED_NODE_SET = "Node set %s";
       static final String NO_MORE_BACKTRACK_POINTS =
           "No more backtrack points to resume; end of search.";
-      static final String NO_MORE_BRANCH_POINTS = "No more branch points to resume; end of search.";
+      static final String NO_MORE_BRANCH_POINTS =
+          "No more AND-branch points to resume; end of search.";
 
     }
 
@@ -88,7 +90,7 @@ class VerboseModeSupport {
         String.valueOf(LAST_ITERATION_INFO.number_of_iterations), LAST_ITERATION_INFO.move.name());
 
     if (LAST_ITERATION_INFO.branch_point_added)
-      iterationStepInfo(MSG.ITERATION_INFO.BRANCH_POINT_ADDED,
+      iterationStepInfo(MSG.ITERATION_INFO.AND_BRANCH_POINT_ADDED,
           String.valueOf(stack.current_stack_size));
     else if (LAST_ITERATION_INFO.backtrack_point_added)
       iterationStepInfo(MSG.ITERATION_INFO.BACKTRACK_POINT_ADDED,
@@ -126,7 +128,7 @@ class VerboseModeSupport {
     case META_BACKTRACK_RULE: {
       printIterationDetails(LAST_ITERATION_INFO, stack);
       printMetaBacktrackDetails((_MetaBacktrackRule) LAST_ITERATION_INFO.applied_rule, 0, // the index of treated backtrack is 0 
-          nextStepSelectedRule);
+          nextStepSelectedRule,false);
 
     }
       break;
@@ -134,13 +136,14 @@ class VerboseModeSupport {
     case REGULAR: {
       _RegularRule rrule = (_RegularRule) LAST_ITERATION_INFO.applied_rule;
       printIterationDetails(LAST_ITERATION_INFO, stack);
-      printRegularRuleApplicationDetails(rrule, 1, currentGoal);
+      printRegularRuleApplicationDetails(rrule, 1, currentGoal, false);
     }
       break;
 
     case BRANCH_EXISTS: {
       printIterationDetails(LAST_ITERATION_INFO, stack);
-      printBranchExistsDetails((_BranchExistsRule) LAST_ITERATION_INFO.applied_rule, 1, currentGoal);
+      printBranchExistsDetails((_BranchExistsRule) LAST_ITERATION_INFO.applied_rule, 1,
+          currentGoal, false);
     }
       break;
 
@@ -195,24 +198,35 @@ class VerboseModeSupport {
 
   }
 
-  /*
+  /**
    * Prints details of a regular rule rule application.
+   *
+   * @param appliedRule the applied rule
+   * @param treatedConclusion the index of the conclusion treated by the rule
+   * application
+   * @param currentGoal the current goal
+   * @param isARestoredRuleApplication if true the engine is applying a rule
+   * resumed from the engine internal stack; in this case the lister are not
+   * added (they were added when the rule was applied for the first time).
    */
-  static void printRegularRuleApplicationDetails(_RegularRule appliedRule, int treatedBranch,
-      GoalNode currentGoal) {
+  static void printRegularRuleApplicationDetails(_RegularRule appliedRule, int treatedConclusion,
+      GoalNode currentGoal, boolean isARestoredRuleApplication) {
     _AbstractFormula treatedFormula = appliedRule.mainFormula();
     iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.SELECTED_MAIN_FORMULA,
         treatedFormula == null ? "[NONE]" : treatedFormula.shortName(),
         treatedFormula == null ? "[NONE]" : treatedFormula.format());
     int totalNumberoOfConclusions = appliedRule.numberOfSubgoals();
     iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.REGULAR_RULE_APPLICATION, appliedRule.name(),
-        totalNumberoOfConclusions, treatedBranch);
+        totalNumberoOfConclusions, treatedConclusion);
 
     // listeners
-    if (appliedRule instanceof _OnRuleCompletedListener)
-      iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_COMPLETED_LISTENER, appliedRule.name());
-    if (appliedRule instanceof _OnRuleResumedListener)
-      iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_RESUMED_LISTENER, appliedRule.name());
+    if (!isARestoredRuleApplication) {
+      if (appliedRule instanceof _OnRuleCompletedListener)
+        iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_COMPLETED_LISTENER,
+            appliedRule.name());
+      if (appliedRule instanceof _OnRuleResumedListener)
+        iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_RESUMED_LISTENER, appliedRule.name());
+    }
 
     // print rule specific details if defined 
     if (appliedRule instanceof _RuleWithDetails)
@@ -228,9 +242,13 @@ class VerboseModeSupport {
    * 
    * @param appliedRule the applied {@link _MetaBacktrackRule}.
    * @param nextStepSelectedRule the rule selected for application.
+   * @param isARestoredRuleApplication if true the engine is applying a rule
+   * resumed from the engine internal stack; in this case the lister are not
+   * added (they were added when the rule was applied for the first time).
    */
   static void printMetaBacktrackDetails(_MetaBacktrackRule appliedRule,
-      int indexOfTreatedBacktrackRule, _AbstractRule nextStepSelectedRule) {
+      int indexOfTreatedBacktrackRule, _AbstractRule nextStepSelectedRule,
+      boolean isARestoredRuleApplication) {
     iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.META_BACKTRACK_RULE_APPLICATION,
         appliedRule.name(), appliedRule.totalNumberOfRules());
 
@@ -254,11 +272,14 @@ class VerboseModeSupport {
           nextStepSelectedRule.name());
     }
 
-    // listener added
-    if (appliedRule instanceof _OnRuleCompletedListener)
-      iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_COMPLETED_LISTENER, appliedRule.name());
-    if (appliedRule instanceof _OnRuleResumedListener)
-      iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_RESUMED_LISTENER, appliedRule.name());
+    if (!isARestoredRuleApplication) {
+      // listener added
+      if (appliedRule instanceof _OnRuleCompletedListener)
+        iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_COMPLETED_LISTENER,
+            appliedRule.name());
+      if (appliedRule instanceof _OnRuleResumedListener)
+        iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_RESUMED_LISTENER, appliedRule.name());
+    }
 
     // print rule specific details if defined 
     if (appliedRule instanceof _RuleWithDetails)
@@ -272,23 +293,29 @@ class VerboseModeSupport {
    * 
    * @param engine the engine performing the proof-search.
    * @param appliedRule the applied {@link _BranchExistsRule}.
-   * @param treatedBranch the treated branch of the {@link _BranchExistsRule}
-   * application.
+   * @param treatedConclusion the treated conclusion of the
+   * {@link _BranchExistsRule} application.
+   * @param isARestoredRuleApplication if true the engine is applying a rule
+   * resumed from the engine internal stack; in this case the lister are not
+   * added (they were added when the rule was applied for the first time).
    */
-  static void printBranchExistsDetails(_BranchExistsRule appliedRule, int treatedBranch,
-      GoalNode currentGoal) {
+  static void printBranchExistsDetails(_BranchExistsRule appliedRule, int treatedConclusion,
+      GoalNode currentGoal, boolean isARestoredRuleApplication) {
     _AbstractFormula treatedFormula = appliedRule.mainFormula();
     iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.SELECTED_MAIN_FORMULA,
         treatedFormula == null ? "[NONE]" : treatedFormula.shortName(),
         treatedFormula == null ? "[NONE]" : treatedFormula.format());
     iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.BRANCH_EXISTS_NEXT_STEP, appliedRule.name(),
-        appliedRule.numberOfBranchExistsSubgoals(), treatedBranch);
+        appliedRule.numberOfBranchExistsSubgoals(), treatedConclusion);
 
-    // listener added
-    if (appliedRule instanceof _OnRuleCompletedListener)
-      iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_COMPLETED_LISTENER, appliedRule.name());
-    if (appliedRule instanceof _OnRuleResumedListener)
-      iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_RESUMED_LISTENER, appliedRule.name());
+    if (!isARestoredRuleApplication) {
+      // listener added
+      if (appliedRule instanceof _OnRuleCompletedListener)
+        iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_COMPLETED_LISTENER,
+            appliedRule.name());
+      if (appliedRule instanceof _OnRuleResumedListener)
+        iterationStepInfo(MSG.RULE_APPLICATION_DETAILS.ON_RULE_RESUMED_LISTENER, appliedRule.name());
+    }
 
     // print rule specific details if defined 
     if (appliedRule instanceof _RuleWithDetails)
@@ -319,12 +346,12 @@ class VerboseModeSupport {
       iterationStepInfo(MSG.RESUMED_NODE_INFO.BACKTRACK_TYPE, RuleType.META_BACKTRACK_RULE.name());
       printMetaBacktrackDetails((_MetaBacktrackRule) engine.stack.restored_DFStackNode.appliedRule,
           ((DFStackNode_MetaBacktrack) engine.stack.restored_DFStackNode)
-              .getIndexOfLastTreatedRule(), rule);
+              .getIndexOfLastTreatedRule(), rule, true);
     } else {
       iterationStepInfo(MSG.RESUMED_NODE_INFO.BACKTRACK_TYPE, RuleType.BRANCH_EXISTS.name());
       printBranchExistsDetails((_BranchExistsRule) engine.stack.restored_DFStackNode.appliedRule,
           ((DFStackNode_BranchExists) engine.stack.restored_DFStackNode).nextToTreat,
-          engine.currentGoal);
+          engine.currentGoal, true);
     }
 
   }
@@ -342,7 +369,7 @@ class VerboseModeSupport {
     _RegularRule appliedRule = (_RegularRule) engine.stack.restored_DFStackNode.appliedRule;
     printRegularRuleApplicationDetails(appliedRule,
         ((DFStackNode_Branch) engine.stack.restored_DFStackNode).nextConclusionToTreat,
-        engine.currentGoal);
+        engine.currentGoal, true);
   }
 
   // UTILITY METHODS

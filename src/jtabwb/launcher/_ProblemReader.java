@@ -19,6 +19,9 @@ package jtabwb.launcher;
 import java.io.IOException;
 import java.io.Reader;
 
+import jtabwbx.problems.ProblemDescription;
+import jtabwbx.problems.ProblemDescriptionException;
+
 /**
  * An object providing a parser for a problem description. A problem description
  * generally contains information as the problem name, the problem assumptions,

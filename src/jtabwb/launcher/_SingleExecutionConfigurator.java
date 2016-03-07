@@ -19,6 +19,7 @@ package jtabwb.launcher;
 import jtabwb.engine._AbstractGoal;
 import jtabwb.engine._Prover;
 import jtabwb.launcher.Launcher.LaunchConfiguration;
+import jtabwbx.problems.ProblemDescription;
 
 // TODO: doc
 public interface _SingleExecutionConfigurator {

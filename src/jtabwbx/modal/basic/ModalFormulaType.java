@@ -17,7 +17,6 @@
 package jtabwbx.modal.basic;
 
 import jtabwb.util.CaseNotImplementedImplementationError;
-import jtabwb.util.ImplementationError;
 import jtabwbx.modal.formula.ModalFormula;
 
 /**

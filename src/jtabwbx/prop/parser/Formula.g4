@@ -5,6 +5,7 @@ grammar Formula;
 }
 
 
+
 formula:  wff EOF ;
 
 wff :   '~' wff            # Neg

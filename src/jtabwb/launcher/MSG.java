@@ -93,6 +93,7 @@ class MSG {
       static final String READER_DETAILS = "** Reader [%s]";
       static final String STAT_STRING =
           "** Generated nodes [%d], restored backtrack-points [%d], restored branch-points [%d]";
+      static final String TESTSET_EXEC_CONFIG_INFO = "--Reader [%s], Prover [%s]\n";
       static final String TESTSET_PROBLEM_INFO = "** [%s], status [%s],";
       static final String TOTAL_TIME_1 = "** Proof time (PS + NSC + PP): (ms) [%d]";
       static final String TOTAL_TIME_2 = "** Proof time (PS + NSC + PP): (ms) [%d] (hh:mm:ss + ms) [%s]";

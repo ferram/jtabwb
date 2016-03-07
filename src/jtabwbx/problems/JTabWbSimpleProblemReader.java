@@ -20,8 +20,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.antlr.v4.parse.ANTLRParser.throwsSpec_return;
+
 import jtabwb.engine.ProvabilityStatus;
-import jtabwb.launcher.ProblemDescriptionException;
 import jtabwb.launcher._ProblemReader;
 
 /**
@@ -48,7 +49,7 @@ import jtabwb.launcher._ProblemReader;
 // TODO: rename JTabWbSimpleFormatProblemReader
 public class JTabWbSimpleProblemReader implements _ProblemReader {
 
-  public static final String NAME = "jtawb_fromat";
+  public static final String NAME = "jtawb_format";
   private static final String DESCRIPTION =
       "The file describes a problem according with simple JTabWb format";
 
@@ -68,35 +69,40 @@ public class JTabWbSimpleProblemReader implements _ProblemReader {
    * @param input the stream with the PITP description of a problem.
    * @return the formula description.
    * @throws IOException if something goes wrong reading the file.
-   * @throws ProblemDescriptionException if the input does not respect the problem format.
+   * @throws ProblemDescriptionException if the input does not respect the
+   * problem format.
    */
   public JTabWbSimpleProblem read(Reader input) throws ProblemDescriptionException, IOException {
 
-    BufferedReader reader = new BufferedReader(input);
+    try {
+      BufferedReader reader = new BufferedReader(input);
 
-    String name = null;
-    String status = null;
-    String formula = null;
+      String name = null;
+      String status = null;
+      String formula = null;
 
-    reader.readLine(); // irrelevant
-    name = reader.readLine().substring(PRE_NAME.length()).trim();
-    status = reader.readLine().substring(PRE_STATUS.length()).trim();
-    reader.readLine(); // irrelevant
-    formula = reader.readLine();
+      reader.readLine(); // irrelevant
+      name = reader.readLine().substring(PRE_NAME.length()).trim();
+      status = reader.readLine().substring(PRE_STATUS.length()).trim();
+      reader.readLine(); // irrelevant
+      formula = reader.readLine();
 
-    ProvabilityStatus stat = null;
+      ProvabilityStatus stat = null;
 
-    if (status.equals("provable"))
-      stat = ProvabilityStatus.PROVABLE;
-    else if (status.equals("unprovable"))
-      stat = ProvabilityStatus.UNPROVABLE;
-    else
-      stat = ProvabilityStatus.UNKNOWN;
+      if (status.equals("provable"))
+        stat = ProvabilityStatus.PROVABLE;
+      else if (status.equals("unprovable"))
+        stat = ProvabilityStatus.UNPROVABLE;
+      else
+        stat = ProvabilityStatus.UNKNOWN;
 
-    JTabWbSimpleProblem pd = new JTabWbSimpleProblem(name);
-    pd.addConjecture(formula);
-    pd.setProblemStatus(stat);
-    return pd;
+      JTabWbSimpleProblem pd = new JTabWbSimpleProblem(name);
+      pd.addConjecture(formula);
+      pd.setProblemStatus(stat);
+      return pd;
+    } catch (NullPointerException e) {
+      throw new ProblemDescriptionException("the problem is not in the JTabWb format.");
+    }
   }
 
   @Override

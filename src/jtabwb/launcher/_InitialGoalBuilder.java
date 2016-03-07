@@ -17,6 +17,7 @@
 package jtabwb.launcher;
 
 import jtabwb.engine._AbstractGoal;
+import jtabwbx.problems.ProblemDescription;
 
 /**
  * An object building the initial goal starting from a problem description.

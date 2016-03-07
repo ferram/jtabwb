@@ -18,8 +18,6 @@ package jtabwbx.problems;
 
 import java.util.LinkedList;
 
-import jtabwb.launcher.ProblemDescription;
-
 /**
  * An object of this class describes a problem of the ILTP-library. A problem
  * consists of a list of axioms (role {@link #ROLE_AXIOM}) and a conjecture
